@@ -22,9 +22,12 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
+    public function create(){
+        return view('admin.category.create',[
+            'category' => [],
+            'categories' => Category::with('children')->where('parent_id','0')->get(),
+            'delimetr' => '',
+        ]);
     }
 
     /**
@@ -33,9 +36,10 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(Request $request){
+        Category::create($request->all());
+        return redirect()->route('admin.category.index');
+
     }
 
     /**
@@ -55,31 +59,24 @@ class CategoryController extends Controller
      * @param  \App\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
-    {
-        //
+    public function edit(Category $category){
+        return view('admin.category.edit',[
+            'category' => $category,
+            'categories' => Category::with('children')->where('parent_id','0')->get(),
+            'delimetr' => '',
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Category $category)
-    {
-        //
+
+    public function update(Request $request, Category $category){
+
+        $category->update($request->except('slug'));
+        return redirect()->route('admin.category.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Category $category)
-    {
-        //
+
+    public function destroy(Category $category){
+        $category->delete();
+        return redirect()->route('admin.category.index');
     }
 }
